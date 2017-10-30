@@ -1,0 +1,56 @@
+language: cpp
+dist: trusty
+sudo: false
+
+addons:
+  apt:
+    sources:
+      - llvm-toolchain-trusty-4.0
+      - ubuntu-toolchain-r-test
+    packages:
+      - libxrandr-dev
+      - libxinerama-dev
+      - libxcursor-dev
+      - libxkbcommon-x11-dev
+      - libpthread-stubs0-dev
+      - libxi-dev
+      - libxmu-dev
+      - clang-4.0
+      - g++-5
+
+matrix:
+  include:
+    - compiler: gcc
+      env: COMPILERS="CXX=g++-4.8 && CC=gcc-4.8" TOOLSET=gcc
+    - compiler: gcc-5
+      env: COMPILERS="CXX=g++-5 && CC=gcc-5" TOOLSET=gcc
+    # There is a weird error for 4.0 and 3.8 during cmake as pthread is not found even if
+    # it is in /usr/include. Don't know whether it is a cmake or a clang related issue...
+#    - compiler: clang-4.0
+#      env: COMPILERS="CXX=clang++-4.0 && CC=clang-4.0" TOOLSET=clang
+    - compiler: clang
+      env: COMPILERS="CXX=clang++ && CC=clang" TOOLSET=clang
+
+
+env:
+  global:
+    - NUM_CPU="`grep processor /proc/cpuinfo | wc -l`"; echo $NUM_CPU
+
+before_install:
+    - eval "${COMPILERS}"
+
+before_script:
+#  - echo | ${CC} -v -E -x c -
+  - echo -e "set(CMAKE_INSTALL_PREFIX `pwd`/build/Linux64-gcc-dynamic-Release/install)\n" >> CMakeOptions.txt
+  - ./configure.sh
+
+script:
+#  - cc --version
+#  - c++ --version
+#  - gcc --version
+#  - g++ --version
+#  - cmake --version
+#  - ${CXX} --version
+#  - ${CC} --version
+  - cd build/Linux64-gcc-dynamic-Release
+  - make VERBOSE=1 -j $NUM_CPU DESTDIR=`pwd`/install install
