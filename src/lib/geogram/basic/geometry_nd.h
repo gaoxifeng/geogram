@@ -506,7 +506,8 @@ namespace GEO {
             double resulte;
 
 	    // If the triangle is degenerate
-	    if(true) {
+            const double threshold = 1e-6;
+	    if(det < threshold) {
 //	    if(det < 1e-30) {
             double cur_l1, cur_l2;
             VEC cur_closest;
@@ -688,7 +689,7 @@ namespace GEO {
             lambda1 = s;
             lambda2 = t;
 
-            if (sqrDistance > resulte)
+            if (det < threshold && sqrDistance > resulte)
             {
                 closest_point = closest_pointe;
                 lambda0 = lambda0e;
