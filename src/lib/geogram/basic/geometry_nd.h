@@ -499,36 +499,42 @@ namespace GEO {
             double s = a01 * b1 - a11 * b0;
             double t = a01 * b0 - a00 * b1;
             double sqrDistance;
+            VEC closest_pointe;
+            double lambda0e;
+            double lambda1e;
+            double lambda2e;
+            double resulte;
 
 	    // If the triangle is degenerate
-	    if(det < 1e-30) {
-		double cur_l1, cur_l2;
-		VEC cur_closest;
-		double result;
-		double cur_dist = point_segment_squared_distance(point, V0, V1, cur_closest, cur_l1, cur_l2);
-		result = cur_dist;
-		closest_point = cur_closest;
-		lambda0 = cur_l1;
-		lambda1 = cur_l2;
-		lambda2 = 0.0;
-		cur_dist = point_segment_squared_distance(point, V0, V2, cur_closest, cur_l1, cur_l2);
-		if(cur_dist < result) {
-		    result = cur_dist;
-		    closest_point = cur_closest;
-		    lambda0 = cur_l1;
-		    lambda2 = cur_l2;
-		    lambda1 = 0.0;
-		}
-		cur_dist = point_segment_squared_distance(point, V1, V2, cur_closest, cur_l1, cur_l2);
-		if(cur_dist < result) {
-		    result = cur_dist;
-		    closest_point = cur_closest;
-		    lambda1 = cur_l1;
-		    lambda2 = cur_l2;
-		    lambda0 = 0.0;
-		}
-		return result;
-	    }
+	    if(true) {
+//	    if(det < 1e-30) {
+            double cur_l1, cur_l2;
+            VEC cur_closest;
+            double result;
+            double cur_dist = point_segment_squared_distance(point, V0, V1, cur_closest, cur_l1, cur_l2);
+            result = cur_dist;
+            closest_pointe = cur_closest;
+            lambda0e = cur_l1;
+            lambda1e = cur_l2;
+            lambda2e = 0.0;
+            cur_dist = point_segment_squared_distance(point, V0, V2, cur_closest, cur_l1, cur_l2);
+            if (cur_dist < result) {
+                result = cur_dist;
+                closest_pointe = cur_closest;
+                lambda0e = cur_l1;
+                lambda2e = cur_l2;
+                lambda1e = 0.0;
+            }
+            cur_dist = point_segment_squared_distance(point, V1, V2, cur_closest, cur_l1, cur_l2);
+            if (cur_dist < result) {
+                result = cur_dist;
+                closest_pointe = cur_closest;
+                lambda1e = cur_l1;
+                lambda2e = cur_l2;
+                lambda0e = 0.0;
+            }
+            resulte = result;
+        }
 	    
             if(s + t <= det) {
                 if(s < 0.0) {
@@ -681,6 +687,16 @@ namespace GEO {
             lambda0 = 1.0 - s - t;
             lambda1 = s;
             lambda2 = t;
+
+            if (sqrDistance > resulte)
+            {
+                closest_point = closest_pointe;
+                lambda0 = lambda0e;
+                lambda1 = lambda1e;
+                lambda2 = lambda2e;
+                return resulte;
+            }
+
             return sqrDistance;
         }
 
